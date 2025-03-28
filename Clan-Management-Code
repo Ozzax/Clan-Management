@@ -1,0 +1,135 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+enum Rulers {
+    Leader = 1,
+    CWManager = 2,
+    Trial = 3,
+    Member = 4
+};
+
+string getRoleName(int role) {
+    switch (role) {
+    case Leader: return "Leader";
+    case CWManager: return "CW Manager";
+    case Trial: return "Trial";
+    case Member: return "Member";
+    default: return "Unknown";
+    }
+}
+
+struct Clan_Info {
+    string Clan_Name;
+    string Clan_Founder;
+    string Clan_Description;
+    int Clan_Members_Count;
+    vector<string> Member_Names;
+    vector<int> Member_Roles;
+};
+
+bool CreateOrNot() {
+    char Choice;
+    do {
+        cout << "Do You Want To Create a Clan? (Y,y for Yes / N,n for No): ";
+        cin >> Choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } while (Choice != 'Y' && Choice != 'y' && Choice != 'n' && Choice != 'N');
+    return (Choice == 'Y' || Choice == 'y'); 
+}
+
+void ClanCreate(vector<Clan_Info>& Clans) {
+    int NumberOfClans;
+    do {
+        cout << "How Many Clans? ";
+        while (!(cin >> NumberOfClans) || NumberOfClans <= 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a positive number: ";
+        }
+        cin.ignore();
+    } while (NumberOfClans <= 0);
+
+    for (int i = 0; i < NumberOfClans; i++) {
+        Clan_Info Clan;
+        cout << "\n=======================\n";
+        cout << "Clan Number: " << i + 1 << endl;
+        cout << "=======================\n";
+
+        cout << "Enter Clan Name: ";
+        getline(cin, Clan.Clan_Name);
+
+        cout << "Enter Clan Founder: ";
+        getline(cin, Clan.Clan_Founder);
+
+        cout << "Enter Clan Description: ";
+        getline(cin, Clan.Clan_Description);
+
+        do {
+            cout << "How Many Members? ";
+            while (!(cin >> Clan.Clan_Members_Count) || Clan.Clan_Members_Count <= 0) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input. Please enter a positive number: ";
+            }
+            cin.ignore();
+        } while (Clan.Clan_Members_Count <= 0);
+
+        for (int y = 0; y < Clan.Clan_Members_Count; y++) {
+            string MemberName;
+            int RoleNumber;
+
+            cout << "Enter Member Number " << y + 1 << " Name: ";
+            getline(cin, MemberName);
+
+            do {
+                cout << "Enter " << MemberName << "'s Role (1=Leader, 2=CW Manager, 3=Trial, 4=Member): ";
+                while (!(cin >> RoleNumber) || RoleNumber < 1 || RoleNumber > 4) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid input. Please enter a number between 1 and 4: ";
+                }
+                cin.ignore();
+            } while (RoleNumber < 1 || RoleNumber > 4);
+
+            Clan.Member_Names.push_back(MemberName);
+            Clan.Member_Roles.push_back(RoleNumber);
+        }
+        Clans.push_back(Clan);
+    }
+}
+
+void Printer(const vector<Clan_Info>& Clans) {
+    cout << "\n\n=================================================\n";
+    for (size_t i = 0; i < Clans.size(); i++) {
+        cout << "Clan Number: " << i + 1 << endl;
+        cout << "Clan Name: " << Clans[i].Clan_Name << endl;
+        cout << "Clan Founder: " << Clans[i].Clan_Founder << endl;
+        cout << "Clan Description: " << Clans[i].Clan_Description << endl;
+        cout << "Number Of Members: " << Clans[i].Clan_Members_Count << endl;
+        cout << "Members: \n";
+
+        for (size_t j = 0; j < Clans[i].Member_Names.size(); j++) {
+            cout << "  Member " << j + 1 << ": " << Clans[i].Member_Names[j] << " - " << getRoleName(Clans[i].Member_Roles[j]) << endl;
+        }
+        cout << "\n=================================================\n";
+    }
+}
+
+void Finale() {
+    vector<Clan_Info> Clans;
+    cout << "Hello, Welcome to Clan Creation" << endl;
+    if (CreateOrNot()) {
+        ClanCreate(Clans);
+        Printer(Clans);
+    }
+    else {
+        cout << "Clan Creation Cancelled." << endl;
+    }
+}
+
+int main() {
+    Finale();
+    return 0;
+}
